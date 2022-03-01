@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"lottery-web-scrapping/models"
+	"lottery-web-scrapping/repositories"
 	"lottery-web-scrapping/utils"
 	"time"
 
@@ -15,12 +16,20 @@ type LotteryLink struct {
 	Date string
 }
 
-type IWebScrapping interface {
+type IWebScrappingService interface {
 	FindAllDate() ([]LotteryLink, error)
 	FindByDate(link string)
 }
 
-func FindAllDate() ([]LotteryLink, error) {
+type WebScrappingService struct {
+	repository repositories.IWebScrappingRepository
+}
+
+func NewWebScrappingService(r repositories.IWebScrappingRepository) IWebScrappingService {
+	return &WebScrappingService{repository: r}
+}
+
+func (r *WebScrappingService) FindAllDate() ([]LotteryLink, error) {
 	url := "https://lottery.kapook.com/history"
 	c := colly.NewCollector()
 	c.SetRequestTimeout(120 * time.Second)
@@ -63,7 +72,7 @@ func FindAllDate() ([]LotteryLink, error) {
 	return paramLink, nil
 }
 
-func FindByDate(link string) {
+func (r *WebScrappingService) FindByDate(link string) {
 	url := link
 
 	c := colly.NewCollector()

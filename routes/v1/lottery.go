@@ -7,7 +7,7 @@ import (
 )
 
 func LotteryRouter(r *gin.RouterGroup) {
-	r.Use(middlewares.Authorization())
+	r.Use(middlewares.AuthorizationAPIKey())
 	{
 		// Check Drawing By Date
 		r.GET("/:Date")
