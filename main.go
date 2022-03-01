@@ -15,6 +15,10 @@ func main() {
 		panic(err)
 	}
 
+	if err := configs.ConnectionRedis(); err != nil {
+		panic(err)
+	}
+
 	fmt.Println("Connection to Mongo")
 
 	server := &http.Server{

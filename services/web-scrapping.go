@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"lottery-web-scrapping/models"
+	"lottery-web-scrapping/utils"
 	"time"
 
 	"github.com/gocolly/colly"
@@ -12,6 +13,11 @@ import (
 type LotteryLink struct {
 	Link string
 	Date string
+}
+
+type IWebScrapping interface {
+	FindAllDate() ([]LotteryLink, error)
+	FindByDate(link string)
 }
 
 func FindAllDate() ([]LotteryLink, error) {
@@ -73,26 +79,26 @@ func FindByDate(link string) {
 			case "รางวัลที่ 1":
 				firstPrize := &models.LotteryType{}
 				firstPrize.Name = p.ChildText("h4")
-				firstPrize.Prize = Filter(p.ChildText("em"))
-				firstPrize.Lottery = append(firstPrize.Lottery, ConvToInteger(p.ChildText("strong")))
+				firstPrize.Prize = utils.Filter(p.ChildText("em"))
+				firstPrize.Lottery = append(firstPrize.Lottery, utils.ConvToInteger(p.ChildText("strong")))
 				drawingLot.FirstPrize = *firstPrize
 			case "เลขหน้า 3 ตัว":
 				frontThridPrize := &models.LotteryType{}
 				frontThridPrize.Name = p.ChildText("h4")
-				frontThridPrize.Prize = Filter(p.ChildText("em"))
-				frontThridPrize.Lottery = append(frontThridPrize.Lottery, ConvToInteger(p.ChildText("strong")))
+				frontThridPrize.Prize = utils.Filter(p.ChildText("em"))
+				frontThridPrize.Lottery = append(frontThridPrize.Lottery, utils.ConvToInteger(p.ChildText("strong")))
 				drawingLot.FrontThird = *frontThridPrize
 			case "เลขท้าย 3 ตัว":
 				endThridPrize := &models.LotteryType{}
 				endThridPrize.Name = p.ChildText("h4")
-				endThridPrize.Prize = Filter(p.ChildText("em"))
-				endThridPrize.Lottery = append(endThridPrize.Lottery, ConvToInteger(p.ChildText("strong")))
+				endThridPrize.Prize = utils.Filter(p.ChildText("em"))
+				endThridPrize.Lottery = append(endThridPrize.Lottery, utils.ConvToInteger(p.ChildText("strong")))
 				drawingLot.EndThird = *endThridPrize
 			case "เลขท้าย 2 ตัว":
 				endSecondPrize := &models.LotteryType{}
 				endSecondPrize.Name = p.ChildText("h4")
-				endSecondPrize.Prize = Filter(p.ChildText("em"))
-				endSecondPrize.Lottery = append(endSecondPrize.Lottery, ConvToInteger(p.ChildText("strong")))
+				endSecondPrize.Prize = utils.Filter(p.ChildText("em"))
+				endSecondPrize.Lottery = append(endSecondPrize.Lottery, utils.ConvToInteger(p.ChildText("strong")))
 				drawingLot.EndSecond = *endSecondPrize
 			}
 		})
@@ -100,9 +106,9 @@ func FindByDate(link string) {
 		// Semilar First Prize
 		semilarFirstPrize := &models.LotteryType{}
 		semilarFirstPrize.Name = h.ChildText("section.another-first-lottery.lottery-similar-first-prize h4")
-		semilarFirstPrize.Prize = Filter(h.ChildText("section.another-first-lottery.lottery-similar-first-prize em"))
+		semilarFirstPrize.Prize = utils.Filter(h.ChildText("section.another-first-lottery.lottery-similar-first-prize em"))
 		h.ForEach("section.another-first-lottery.lottery-similar-first-prize > strong", func(_ int, e *colly.HTMLElement) {
-			semilarFirstPrize.Lottery = append(semilarFirstPrize.Lottery, ConvToInteger(e.Text))
+			semilarFirstPrize.Lottery = append(semilarFirstPrize.Lottery, utils.ConvToInteger(e.Text))
 		})
 
 		drawingLot.NearFirstPrize = *semilarFirstPrize
@@ -110,9 +116,9 @@ func FindByDate(link string) {
 		// Second Prize
 		secondPrize := &models.LotteryType{}
 		secondPrize.Name = h.ChildText("section.another-lottery.lottery-second-prize h4")
-		secondPrize.Prize = Filter(h.ChildText("section.another-lottery.lottery-second-prize em"))
+		secondPrize.Prize = utils.Filter(h.ChildText("section.another-lottery.lottery-second-prize em"))
 		h.ForEach("section.another-lottery.lottery-second-prize > div > strong", func(_ int, e *colly.HTMLElement) {
-			secondPrize.Lottery = append(secondPrize.Lottery, ConvToInteger(e.Text))
+			secondPrize.Lottery = append(secondPrize.Lottery, utils.ConvToInteger(e.Text))
 		})
 
 		drawingLot.SecondPrize = *secondPrize
@@ -120,9 +126,9 @@ func FindByDate(link string) {
 		// Third Prize
 		thridPrize := &models.LotteryType{}
 		thridPrize.Name = h.ChildText("section.another-lottery.lottery-third-prize h4")
-		thridPrize.Prize = Filter(h.ChildText("section.another-lottery.lottery-third-prize em"))
+		thridPrize.Prize = utils.Filter(h.ChildText("section.another-lottery.lottery-third-prize em"))
 		h.ForEach("section.another-lottery.lottery-third-prize > div > strong", func(_ int, e *colly.HTMLElement) {
-			thridPrize.Lottery = append(thridPrize.Lottery, ConvToInteger(e.Text))
+			thridPrize.Lottery = append(thridPrize.Lottery, utils.ConvToInteger(e.Text))
 		})
 
 		drawingLot.ThridPrize = *thridPrize
@@ -130,9 +136,9 @@ func FindByDate(link string) {
 		// Fourth Prize
 		fourthPrize := &models.LotteryType{}
 		fourthPrize.Name = h.ChildText("section.another-lottery.lottery-fourth-prize h4")
-		fourthPrize.Prize = Filter(h.ChildText("section.another-lottery.lottery-fourth-prize em"))
+		fourthPrize.Prize = utils.Filter(h.ChildText("section.another-lottery.lottery-fourth-prize em"))
 		h.ForEach("section.another-lottery.lottery-fourth-prize > div > strong", func(_ int, e *colly.HTMLElement) {
-			fourthPrize.Lottery = append(fourthPrize.Lottery, ConvToInteger(e.Text))
+			fourthPrize.Lottery = append(fourthPrize.Lottery, utils.ConvToInteger(e.Text))
 		})
 
 		drawingLot.FourthPrize = *fourthPrize
@@ -140,9 +146,9 @@ func FindByDate(link string) {
 		// Fifth Prize
 		fifthPrize := &models.LotteryType{}
 		fifthPrize.Name = h.ChildText("section.another-lottery.lottery-fifth-prize h4")
-		fifthPrize.Prize = Filter(h.ChildText("section.another-lottery.lottery-fifth-prize em"))
+		fifthPrize.Prize = utils.Filter(h.ChildText("section.another-lottery.lottery-fifth-prize em"))
 		h.ForEach("section.another-lottery.lottery-fifth-prize > div > strong", func(_ int, e *colly.HTMLElement) {
-			fifthPrize.Lottery = append(fifthPrize.Lottery, ConvToInteger(e.Text))
+			fifthPrize.Lottery = append(fifthPrize.Lottery, utils.ConvToInteger(e.Text))
 		})
 
 		drawingLot.FifthPrize = *fifthPrize

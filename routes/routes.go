@@ -18,15 +18,14 @@ func InitialRouter() *gin.Engine {
 		return
 	})
 
-	r.POST("/signin")
-	r.POST("/signout")
-	r.POST("/refresh")
-
 	// Api V1
 	v1API := r.Group("/api/v1")
 	{
 		// Auth
 		v1.AuthRouter(v1API)
+
+		// Lotery
+		v1.LotteryRouter(v1API.Group("/lottery"))
 	}
 
 	return r
