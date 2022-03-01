@@ -1,6 +1,7 @@
 package routes
 
 import (
+	v1 "lottery-web-scrapping/routes/v1"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,14 +17,16 @@ func InitialRouter() *gin.Engine {
 		c.JSON(http.StatusAccepted, "ROOT WEB")
 		return
 	})
-	r.POST("/auth")
+
+	r.POST("/signin")
+	r.POST("/signout")
+	r.POST("/refresh")
 
 	// Api V1
-	v1 := r.Group("/api/v1")
-
-	v1.Use()
+	v1API := r.Group("/api/v1")
 	{
-
+		// Auth
+		v1.AuthRouter(v1API)
 	}
 
 	return r
