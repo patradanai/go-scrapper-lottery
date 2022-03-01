@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var clientMongo *mongo.Client
+var ClientMongo *mongo.Client
 
 func ConnectionMongo() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -19,6 +19,6 @@ func ConnectionMongo() error {
 		return err
 	}
 
-	clientMongo = client
+	ClientMongo = client
 	return nil
 }

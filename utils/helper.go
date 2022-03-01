@@ -5,6 +5,37 @@ import (
 	"strconv"
 )
 
+func GetDate(date string) map[string]string {
+	r := regexp.MustCompile("(?P<Day>\\d{1,2}) (?P<Monthly>.*) (?P<Year>\\d{4})")
+	matchs := r.FindStringSubmatch(date)
+	params := make(map[string]string)
+
+	for i, name := range r.SubexpNames() {
+		params[name] = matchs[i]
+	}
+
+	return params
+}
+
+func ConvMonthlyToNum(monthly string) int {
+	textMonthly := map[string]int{
+		"มกราคม":     1,
+		"กุมภาพันธ์": 2,
+		"มีนาคม":     3,
+		"เมษายน":     4,
+		"พฤษภาคม":    5,
+		"มิถุนายน":   6,
+		"กรกฏาคม":    7,
+		"สิงหาคม":    8,
+		"กันยายน":    9,
+		"ตุลาคม":     10,
+		"พฤศจิกายน":  11,
+		"ธันวาคม":    12,
+	}
+
+	return textMonthly[monthly]
+}
+
 func Filter(text string) string {
 	r := regexp.MustCompile("รางวัลละ (?P<Prize>.*?) บาท")
 	matchs := r.FindStringSubmatch(text)

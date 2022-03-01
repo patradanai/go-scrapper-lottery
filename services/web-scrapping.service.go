@@ -1,4 +1,4 @@
-package utils
+package services
 
 import (
 	"encoding/json"
@@ -81,6 +81,19 @@ func (r *WebScrappingService) FindByDate(link string) {
 	drawingLot := &models.DrawingLottery{}
 
 	c.OnHTML("main[class=article-main]", func(h *colly.HTMLElement) {
+
+		// Get Date
+		date := utils.GetDate(h.ChildText("section.hilight-lottery > hgroup > h3"))
+
+		// Shift Pad
+		dayString := fmt.Sprintf("%02d", utils.ConvToInteger(date["Day"]))
+		monthlyString := fmt.Sprintf("%02d", utils.ConvMonthlyToNum(date["Monthly"]))
+		yearString := fmt.Sprintf("%04d", utils.ConvToInteger(date["Year"]))
+
+		drawingLot.Day = dayString
+		drawingLot.Month = monthlyString
+		drawingLot.Year = yearString
+		drawingLot.FullDate = fmt.Sprintf("%v%v%v", dayString, monthlyString, yearString)
 
 		// First Prize
 		h.ForEach("div[class=prize]", func(i int, p *colly.HTMLElement) {
@@ -172,6 +185,8 @@ func (r *WebScrappingService) FindByDate(link string) {
 	})
 
 	c.Visit(url)
+
+	r.repository.CreateLottery(drawingLot)
 
 	dataJson, err := json.MarshalIndent(drawingLot, "", " ")
 	if err != nil {

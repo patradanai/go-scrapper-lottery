@@ -8,7 +8,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-var clientRedis *redis.Client
+var ClientRedis *redis.Client
 
 func ConnectionRedis() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -24,7 +24,7 @@ func ConnectionRedis() error {
 		return err
 	}
 
-	clientRedis = client
+	ClientRedis = client
 
 	fmt.Printf("Redis Connected : %v \n", pong)
 	return nil
