@@ -59,3 +59,14 @@ func ConvToInteger(myString string) int {
 
 	return value
 }
+
+func Contains(s []string, t string) bool {
+	for _, val := range s {
+
+		if val == t {
+			return true
+		}
+	}
+
+	return false
+}

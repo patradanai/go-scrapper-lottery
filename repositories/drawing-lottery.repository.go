@@ -10,18 +10,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type IWebScrappingRepository interface {
+type IDrawingLotteryRepository interface {
 	CreateLottery(lottery *models.DrawingLottery) error
-	FindByNumber() (*models.DrawingLottery, error)
+	FindByNumber(date string) (*models.DrawingLottery, error)
 	FindByDate() (interface{}, error)
 }
 
-type WebScrappingRepository struct {
+type DrawingLotteryRepository struct {
 	BaseRepository
 }
 
-func NewWebScrappingRepository(c *mongo.Client) IWebScrappingRepository {
-	return &WebScrappingRepository{
+func NewDrawingLotteryRepository(c *mongo.Client) IDrawingLotteryRepository {
+	return &DrawingLotteryRepository{
 		BaseRepository{c},
 	}
 }
@@ -29,7 +29,7 @@ func NewWebScrappingRepository(c *mongo.Client) IWebScrappingRepository {
 /*
 	Create Lottery
 */
-func (c *WebScrappingRepository) CreateLottery(lottery *models.DrawingLottery) error {
+func (c *DrawingLotteryRepository) CreateLottery(lottery *models.DrawingLottery) error {
 	lotteryCollection := c.Client.Database(utils.LoadEnv("MONGO_DB_NAME")).Collection("drawing_lottery")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -43,13 +43,14 @@ func (c *WebScrappingRepository) CreateLottery(lottery *models.DrawingLottery) e
 /*
 	Find One Lottery by Filter Date , Number
 */
-func (c *WebScrappingRepository) FindByNumber() (*models.DrawingLottery, error) {
+func (c *DrawingLotteryRepository) FindByNumber(date string) (*models.DrawingLottery, error) {
 	lotteryCollection := c.Client.Database(utils.LoadEnv("MONGO_DB_NAME")).Collection("drawing_lottery")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	var lottery models.DrawingLottery
-	filter := bson.M{}
+
+	filter := bson.M{"full_date": date}
 
 	if err := lotteryCollection.FindOne(ctx, filter).Decode(&lottery); err != nil {
 		return nil, err
@@ -61,6 +62,6 @@ func (c *WebScrappingRepository) FindByNumber() (*models.DrawingLottery, error) 
 /*
 	Find Many Lottery by Date
 */
-func (c *WebScrappingRepository) FindByDate() (interface{}, error) {
+func (c *DrawingLotteryRepository) FindByDate() (interface{}, error) {
 	return nil, nil
 }

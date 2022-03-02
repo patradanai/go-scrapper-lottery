@@ -26,10 +26,10 @@ func main() {
 
 	fmt.Println("Connection to Mongo")
 
-	LotteryRepo := repositories.NewWebScrappingRepository(configs.ClientMongo)
-	LotteryService := services.NewWebScrappingService(LotteryRepo)
+	LotteryRepo := repositories.NewDrawingLotteryRepository(configs.ClientMongo)
+	LotteryService := services.NewDrawingLotteryService(LotteryRepo)
 
-	LotteryService.FindByDate("https://lottery.kapook.com/check/010365")
+	LotteryService.FindLotteryByNumber("01032565")
 
 	server := &http.Server{
 		Addr:           ":8080",

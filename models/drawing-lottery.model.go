@@ -9,7 +9,7 @@ import (
 type LotteryType struct {
 	Name    string
 	Prize   string
-	Lottery []int
+	Lottery []string
 }
 
 type DrawingLottery struct {
