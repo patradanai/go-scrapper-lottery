@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"lottery-web-scrapping/configs"
 	"lottery-web-scrapping/repositories"
 	"lottery-web-scrapping/services"
@@ -23,12 +22,14 @@ func FindLotteryByDate(c *gin.Context) {
 	LotteryRepo := repositories.NewDrawingLotteryRepository(configs.ClientMongo)
 	LotteryService := services.NewDrawingLotteryService(LotteryRepo)
 
+	// Binding
 	params := ParamsDate{}
 	if err := c.ShouldBindUri(&params); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Please Check parameter uri"})
 		return
 	}
-	fmt.Println(params.DateID)
+
+	// Find Drawing By Date
 	result, err := LotteryService.FindLotteryByDate(params.DateID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Somthing went wrong"})
@@ -42,12 +43,14 @@ func FindLotteryByNumber(c *gin.Context) {
 	LotteryRepo := repositories.NewDrawingLotteryRepository(configs.ClientMongo)
 	LotteryService := services.NewDrawingLotteryService(LotteryRepo)
 
+	// Binding
 	params := ParamNumber{}
 	if err := c.ShouldBindUri(&params); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Please Check parameter uri"})
 		return
 	}
-	fmt.Printf("%v,%v", params.DateID, params.Number)
+
+	// Find Number by Date
 	result, exist := LotteryService.FindLotteryByNumber(params.Number, params.DateID)
 	if exist {
 		c.JSON(http.StatusAccepted, gin.H{"success": true, "drawing_date": params.DateID, "winner": true, "lottery": params.Number, "result": result})

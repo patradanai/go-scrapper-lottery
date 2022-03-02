@@ -33,6 +33,9 @@ func (r *DrawingLotteryService) FindLotteryByNumber(number string, date string) 
 }
 
 func (r *DrawingLotteryService) FindLotteryByDate(date string) (interface{}, error) {
+	// Find Drawing Date
+
+	// Drawing Date Included
 	result, err := r.repository.FindByDate(date)
 	if err != nil {
 		return nil, err

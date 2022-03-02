@@ -11,13 +11,8 @@ import (
 	"github.com/gocolly/colly"
 )
 
-type LotteryLink struct {
-	Link string
-	Date string
-}
-
 type IWebScrappingService interface {
-	GetAllDate() ([]LotteryLink, error)
+	GetAllDate() ([]models.LotteryLink, error)
 	GetByDate(link string)
 }
 
@@ -29,12 +24,12 @@ func NewWebScrappingService(r repositories.IDrawingLotteryRepository) IWebScrapp
 	return &WebScrappingService{repository: r}
 }
 
-func (r *WebScrappingService) GetAllDate() ([]LotteryLink, error) {
+func (r *WebScrappingService) GetAllDate() ([]models.LotteryLink, error) {
 	url := "https://lottery.kapook.com/history"
 	c := colly.NewCollector()
 	c.SetRequestTimeout(120 * time.Second)
 
-	paramLink := make([]LotteryLink, 0)
+	paramLink := make([]models.LotteryLink, 0)
 
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
@@ -44,7 +39,7 @@ func (r *WebScrappingService) GetAllDate() ([]LotteryLink, error) {
 		e.ForEach("section[class=history-check]", func(_ int, h *colly.HTMLElement) {
 			h.ForEach("ul > li", func(_ int, l *colly.HTMLElement) {
 				// fmt.Printf("Date : %v, %v \n", l.ChildText("strong"), l.ChildAttr("a", "href"))
-				param := LotteryLink{}
+				param := models.LotteryLink{}
 				param.Date = l.ChildText("a > strong")
 				param.Link = "https://lottery.kapook.com" + l.ChildAttr("a", "href")
 				paramLink = append(paramLink, param)
