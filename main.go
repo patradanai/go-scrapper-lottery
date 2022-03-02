@@ -3,9 +3,7 @@ package main
 import (
 	"fmt"
 	"lottery-web-scrapping/configs"
-	"lottery-web-scrapping/repositories"
 	"lottery-web-scrapping/routes"
-	"lottery-web-scrapping/services"
 	"net/http"
 	"time"
 
@@ -25,11 +23,6 @@ func main() {
 	}
 
 	fmt.Println("Connection to Mongo")
-
-	LotteryRepo := repositories.NewDrawingLotteryRepository(configs.ClientMongo)
-	LotteryService := services.NewDrawingLotteryService(LotteryRepo)
-
-	LotteryService.FindLotteryByNumber("01032565")
 
 	server := &http.Server{
 		Addr:           ":8080",

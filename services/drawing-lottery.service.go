@@ -7,7 +7,8 @@ import (
 )
 
 type IDrawingLotteryService interface {
-	FindLotteryByNumber(number string)
+	FindLotteryByNumber(number string, date string) (interface{}, bool)
+	FindLotteryByDate(date string) (interface{}, error)
 }
 
 type DrawingLotteryService struct {
@@ -18,20 +19,24 @@ func NewDrawingLotteryService(r repositories.IDrawingLotteryRepository) IDrawing
 	return &DrawingLotteryService{repository: r}
 }
 
-func (r *DrawingLotteryService) FindLotteryByNumber(number string) {
-	result, err := r.repository.FindByNumber(number)
+func (r *DrawingLotteryService) FindLotteryByNumber(number string, date string) (interface{}, bool) {
+	result, err := r.repository.FindByDate(date)
 	if err != nil {
 		panic(err)
 	}
 
 	// Find Prize
 	fmt.Println("Find Prize")
-	utils.FindPrize("360307", result)
+	data, exist := utils.FindPrize(number, result)
 
-	// jsonData, err := json.Marshal(result)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	return data, exist
+}
 
-	// fmt.Println(string(jsonData))
+func (r *DrawingLotteryService) FindLotteryByDate(date string) (interface{}, error) {
+	result, err := r.repository.FindByDate(date)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

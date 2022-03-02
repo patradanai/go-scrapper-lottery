@@ -12,8 +12,7 @@ import (
 
 type IDrawingLotteryRepository interface {
 	CreateLottery(lottery *models.DrawingLottery) error
-	FindByNumber(date string) (*models.DrawingLottery, error)
-	FindByDate() (interface{}, error)
+	FindByDate(date string) (*models.DrawingLottery, error)
 }
 
 type DrawingLotteryRepository struct {
@@ -41,9 +40,9 @@ func (c *DrawingLotteryRepository) CreateLottery(lottery *models.DrawingLottery)
 }
 
 /*
-	Find One Lottery by Filter Date , Number
+	Find Many Lottery by Date
 */
-func (c *DrawingLotteryRepository) FindByNumber(date string) (*models.DrawingLottery, error) {
+func (c *DrawingLotteryRepository) FindByDate(date string) (*models.DrawingLottery, error) {
 	lotteryCollection := c.Client.Database(utils.LoadEnv("MONGO_DB_NAME")).Collection("drawing_lottery")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -57,11 +56,4 @@ func (c *DrawingLotteryRepository) FindByNumber(date string) (*models.DrawingLot
 	}
 
 	return &lottery, nil
-}
-
-/*
-	Find Many Lottery by Date
-*/
-func (c *DrawingLotteryRepository) FindByDate() (interface{}, error) {
-	return nil, nil
 }
