@@ -10,6 +10,7 @@ import (
 )
 
 type IPermissionRepository interface {
+	FindAllPermission() ([]models.Permission, error)
 }
 
 type PermissionRepository struct {
@@ -47,4 +48,18 @@ func (r *BaseRepository) FindAllPermission() ([]models.Permission, error) {
 	}
 
 	return permissions, nil
+}
+
+func (r *BaseRepository) FindOnePermission(filter string) (*models.Permission, error) {
+	permissionCollection := r.Client.Database(utils.LoadEnv("MONGO_DB_NAME")).Collection("permissions")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	permission := models.Permission{}
+
+	if err := permissionCollection.FindOne(ctx, filter).Decode(&permission); err != nil {
+		return nil, err
+	}
+
+	return &permission, nil
 }
