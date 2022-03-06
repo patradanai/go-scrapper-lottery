@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"github.com/google/uuid"
 	"regexp"
 	"strconv"
 )
@@ -69,4 +70,11 @@ func Contains(s []string, t string) bool {
 	}
 
 	return false
+}
+
+func GenUUID() string {
+	uuidNew := uuid.New()
+	reg := regexp.MustCompile("[-]")
+
+	return reg.ReplaceAllString(uuidNew.String(), "")
 }

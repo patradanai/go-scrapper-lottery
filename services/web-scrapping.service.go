@@ -100,17 +100,17 @@ func (r *WebScrappingService) GetByDate(link string) {
 				firstPrize.Lottery = append(firstPrize.Lottery, p.ChildText("strong"))
 				drawingLot.FirstPrize = *firstPrize
 			case "เลขหน้า 3 ตัว":
-				frontThridPrize := &models.LotteryType{}
-				frontThridPrize.Name = p.ChildText("h4")
-				frontThridPrize.Prize = utils.Filter(p.ChildText("em"))
-				frontThridPrize.Lottery = append(frontThridPrize.Lottery, p.ChildText("strong"))
-				drawingLot.FrontThird = *frontThridPrize
+				frontThirdPrize := &models.LotteryType{}
+				frontThirdPrize.Name = p.ChildText("h4")
+				frontThirdPrize.Prize = utils.Filter(p.ChildText("em"))
+				frontThirdPrize.Lottery = append(frontThirdPrize.Lottery, p.ChildText("strong"))
+				drawingLot.FrontThird = *frontThirdPrize
 			case "เลขท้าย 3 ตัว":
-				endThridPrize := &models.LotteryType{}
-				endThridPrize.Name = p.ChildText("h4")
-				endThridPrize.Prize = utils.Filter(p.ChildText("em"))
-				endThridPrize.Lottery = append(endThridPrize.Lottery, p.ChildText("strong"))
-				drawingLot.EndThird = *endThridPrize
+				endThirdPrize := &models.LotteryType{}
+				endThirdPrize.Name = p.ChildText("h4")
+				endThirdPrize.Prize = utils.Filter(p.ChildText("em"))
+				endThirdPrize.Lottery = append(endThirdPrize.Lottery, p.ChildText("strong"))
+				drawingLot.EndThird = *endThirdPrize
 			case "เลขท้าย 2 ตัว":
 				endSecondPrize := &models.LotteryType{}
 				endSecondPrize.Name = p.ChildText("h4")
@@ -120,15 +120,15 @@ func (r *WebScrappingService) GetByDate(link string) {
 			}
 		})
 
-		// Semilar First Prize
-		semilarFirstPrize := &models.LotteryType{}
-		semilarFirstPrize.Name = h.ChildText("section.another-first-lottery.lottery-similar-first-prize h4")
-		semilarFirstPrize.Prize = utils.Filter(h.ChildText("section.another-first-lottery.lottery-similar-first-prize em"))
+		// Similar First Prize
+		similarFirstPrize := &models.LotteryType{}
+		similarFirstPrize.Name = h.ChildText("section.another-first-lottery.lottery-similar-first-prize h4")
+		similarFirstPrize.Prize = utils.Filter(h.ChildText("section.another-first-lottery.lottery-similar-first-prize em"))
 		h.ForEach("section.another-first-lottery.lottery-similar-first-prize > strong", func(_ int, e *colly.HTMLElement) {
-			semilarFirstPrize.Lottery = append(semilarFirstPrize.Lottery, e.Text)
+			similarFirstPrize.Lottery = append(similarFirstPrize.Lottery, e.Text)
 		})
 
-		drawingLot.NearFirstPrize = *semilarFirstPrize
+		drawingLot.NearFirstPrize = *similarFirstPrize
 
 		// Second Prize
 		secondPrize := &models.LotteryType{}
@@ -141,14 +141,14 @@ func (r *WebScrappingService) GetByDate(link string) {
 		drawingLot.SecondPrize = *secondPrize
 
 		// Third Prize
-		thridPrize := &models.LotteryType{}
-		thridPrize.Name = h.ChildText("section.another-lottery.lottery-third-prize h4")
-		thridPrize.Prize = utils.Filter(h.ChildText("section.another-lottery.lottery-third-prize em"))
+		thirdPrize := &models.LotteryType{}
+		thirdPrize.Name = h.ChildText("section.another-lottery.lottery-third-prize h4")
+		thirdPrize.Prize = utils.Filter(h.ChildText("section.another-lottery.lottery-third-prize em"))
 		h.ForEach("section.another-lottery.lottery-third-prize > div > strong", func(_ int, e *colly.HTMLElement) {
-			thridPrize.Lottery = append(thridPrize.Lottery, e.Text)
+			thirdPrize.Lottery = append(thirdPrize.Lottery, e.Text)
 		})
 
-		drawingLot.ThridPrize = *thridPrize
+		drawingLot.ThridPrize = *thirdPrize
 
 		// Fourth Prize
 		fourthPrize := &models.LotteryType{}
@@ -179,9 +179,13 @@ func (r *WebScrappingService) GetByDate(link string) {
 		fmt.Println("Got this error:", e)
 	})
 
-	c.Visit(url)
+	if err := c.Visit(url); err != nil {
+		panic(err)
+	}
 
-	r.repository.CreateLottery(drawingLot)
+	if err := r.repository.CreateLottery(drawingLot); err != nil {
+		panic(err)
+	}
 
 	dataJson, err := json.MarshalIndent(drawingLot, "", " ")
 	if err != nil {

@@ -12,7 +12,7 @@ type typePrize struct {
 }
 
 func FindPrize(number string, data *models.DrawingLottery) ([]typePrize, bool) {
-	totalPrize := []typePrize{}
+	var totalPrize []typePrize
 	// Find First Prize
 	if Contains(data.FirstPrize.Lottery, number) {
 		lottery := &typePrize{Message: "Congratulations " + data.FirstPrize.Name, Name: data.FirstPrize.Name, Prize: data.FirstPrize.Prize, Lottery: number}
