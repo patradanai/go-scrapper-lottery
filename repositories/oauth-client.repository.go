@@ -24,8 +24,8 @@ func NewOAuthClientRepository(c *mongo.Client) IOAuthClientRepository {
 	}
 }
 
-func (c *BaseRepository) CreateOneOAuthClient(oauth *models.OauthClient) error {
-	oauthClientCollection := c.Client.Database(utils.LoadEnv("MONGO_DB_NAME")).Collection("oauth_clients")
+func (r *BaseRepository) CreateOneOAuthClient(oauth *models.OauthClient) error {
+	oauthClientCollection := r.Client.Database(utils.LoadEnv("MONGO_DB_NAME")).Collection("oauth_clients")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -36,8 +36,8 @@ func (c *BaseRepository) CreateOneOAuthClient(oauth *models.OauthClient) error {
 	return nil
 }
 
-func (c *BaseRepository) FindOneOAuthClient(filter bson.M) (*models.OauthClient, error) {
-	oauthClientCollection := c.Client.Database(utils.LoadEnv("MONGO_DB_NAME")).Collection("oauth_clients")
+func (r *BaseRepository) FindOneOAuthClient(filter bson.M) (*models.OauthClient, error) {
+	oauthClientCollection := r.Client.Database(utils.LoadEnv("MONGO_DB_NAME")).Collection("oauth_clients")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 

@@ -22,8 +22,8 @@ func NewRefreshTokenRepository(c *mongo.Client) IRefreshTokenRepository {
 	}
 }
 
-func (c *BaseRepository) CreateOneRefreshToken(token *models.RefreshToken) error {
-	refreshTokenCollection := c.Client.Database(utils.LoadEnv("MONGO_DB_NAME")).Collection("refresh_tokens")
+func (r *BaseRepository) CreateOneRefreshToken(token *models.RefreshToken) error {
+	refreshTokenCollection := r.Client.Database(utils.LoadEnv("MONGO_DB_NAME")).Collection("refresh_tokens")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
