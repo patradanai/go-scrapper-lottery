@@ -4,6 +4,8 @@ go 1.17
 
 require github.com/gocolly/colly v1.2.0
 
+require github.com/robfig/cron/v3 v3.0.0 // indirect
+
 require (
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
 	github.com/andybalholm/cascadia v1.2.0 // indirect
