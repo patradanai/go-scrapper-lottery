@@ -2,6 +2,7 @@ package driver
 
 import (
 	"context"
+	"log"
 	"lottery-web-scrapping/configs"
 	"time"
 
@@ -11,14 +12,14 @@ import (
 
 var ClientMongo *mongo.Client
 
-func ConnectionMongo() error {
+func ConnectionMongo() *mongo.Client {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(configs.LoadEnv("MONGO_DB")))
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
 
 	ClientMongo = client
-	return nil
+	return client
 }

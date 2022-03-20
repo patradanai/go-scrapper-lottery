@@ -1,19 +1,19 @@
 package v1
 
 import (
-	"lottery-web-scrapping/api/controllers"
+	"lottery-web-scrapping/api/handler"
 
 	"github.com/gin-gonic/gin"
 )
 
-func LotteryRouter(r *gin.RouterGroup) {
+func LotteryRouter(r *gin.RouterGroup, handler *handler.Handler) {
 	r.Use()
 	{
 		// Check Drawing By Date
-		r.GET("/:DateId", controllers.FindLotteryByDate)
+		r.GET("/:DateId", handler.FindLotteryByDate)
 
 		// Check Drawing By Date and Number
-		r.GET("/:DateId/:NumberId", controllers.FindLotteryByNumber)
+		r.GET("/:DateId/:NumberId", handler.FindLotteryByNumber)
 
 		// Check Drawing By Date and Numbers
 		r.POST("/:DateId")

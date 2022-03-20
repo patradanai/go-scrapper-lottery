@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"lottery-web-scrapping/api/handler"
 	"lottery-web-scrapping/api/routes"
 	"lottery-web-scrapping/driver"
 	"net/http"
@@ -19,9 +20,9 @@ func main() {
 	gin.SetMode(gin.DebugMode)
 
 	// Init Mongo Connection
-	if err := driver.ConnectionMongo(); err != nil {
-		panic(err)
-	}
+	c := driver.ConnectionMongo()
+	h := handler.NewHanlder(c)
+	r := routes.InitialRouter(h)
 
 	if err := driver.ConnectionRedis(); err != nil {
 		panic(err)
@@ -34,7 +35,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:           ":8080",
-		Handler:        routes.InitialRouter(),
+		Handler:        r,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,

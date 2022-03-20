@@ -1,9 +1,6 @@
-package controllers
+package handler
 
 import (
-	"lottery-web-scrapping/driver"
-	"lottery-web-scrapping/internal/repositories"
-	"lottery-web-scrapping/internal/services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,9 +15,7 @@ type ParamNumber struct {
 	Number string `uri:"NumberId" binding:"required,alphanum,len=6"`
 }
 
-func FindLotteryByDate(c *gin.Context) {
-	LotteryRepo := repositories.NewDrawingLotteryRepository(driver.ClientMongo)
-	LotteryService := services.NewDrawingLotteryService(LotteryRepo)
+func (h *Handler) FindLotteryByDate(c *gin.Context) {
 
 	// Binding
 	params := ParamsDate{}
@@ -29,16 +24,12 @@ func FindLotteryByDate(c *gin.Context) {
 		return
 	}
 
-	// Check Existing Drawing Date
-	drawingDateRepo := repositories.NewDrawingDateRepository(driver.ClientMongo)
-	drawingDateService := services.NewDrawingDateService(drawingDateRepo)
-
-	if err := drawingDateService.FindDrawingDate(params.DateID); err != nil {
+	if err := h.DrawingDateService.FindDrawingDate(params.DateID); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Drawing Date not existing"})
 		return
 	}
 	// Find Drawing By Date
-	result, err := LotteryService.FindLotteryByDate(params.DateID)
+	result, err := h.LotteryService.FindLotteryByDate(params.DateID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Somthing went wrong"})
 		return
@@ -47,9 +38,7 @@ func FindLotteryByDate(c *gin.Context) {
 	c.JSON(http.StatusAccepted, gin.H{"success": true, "drawing_date": params.DateID, "result": result})
 }
 
-func FindLotteryByNumber(c *gin.Context) {
-	LotteryRepo := repositories.NewDrawingLotteryRepository(driver.ClientMongo)
-	LotteryService := services.NewDrawingLotteryService(LotteryRepo)
+func (h *Handler) FindLotteryByNumber(c *gin.Context) {
 
 	// Binding
 	params := ParamNumber{}
@@ -58,17 +47,13 @@ func FindLotteryByNumber(c *gin.Context) {
 		return
 	}
 
-	// Check Existing Drawing Date
-	drawingDateRepo := repositories.NewDrawingDateRepository(driver.ClientMongo)
-	drawingDateService := services.NewDrawingDateService(drawingDateRepo)
-
-	if err := drawingDateService.FindDrawingDate(params.DateID); err != nil {
+	if err := h.DrawingDateService.FindDrawingDate(params.DateID); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Drawing Date not existing"})
 		return
 	}
 
 	// Find Number by Date
-	result, exist := LotteryService.FindLotteryByNumber(params.Number, params.DateID)
+	result, exist := h.LotteryService.FindLotteryByNumber(params.Number, params.DateID)
 	if exist {
 		c.JSON(http.StatusAccepted, gin.H{"success": true, "drawing_date": params.DateID, "winner": true, "lottery": params.Number, "result": result})
 		return

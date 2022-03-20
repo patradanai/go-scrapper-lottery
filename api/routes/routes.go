@@ -1,13 +1,14 @@
 package routes
 
 import (
+	"lottery-web-scrapping/api/handler"
 	v1 "lottery-web-scrapping/api/routes/v1"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func InitialRouter() *gin.Engine {
+func InitialRouter(handler *handler.Handler) *gin.Engine {
 	r := gin.Default()
 
 	r.Use(gin.Logger())
@@ -25,7 +26,7 @@ func InitialRouter() *gin.Engine {
 		v1.AuthRouter(v1API)
 
 		// Lotery
-		v1.LotteryRouter(v1API.Group("/lottery"))
+		v1.LotteryRouter(v1API.Group("/lottery"), handler)
 	}
 
 	return r
