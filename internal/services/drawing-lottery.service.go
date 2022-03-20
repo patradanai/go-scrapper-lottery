@@ -2,11 +2,13 @@ package services
 
 import (
 	"fmt"
+	"lottery-web-scrapping/internal/models"
 	"lottery-web-scrapping/internal/repositories"
 	"lottery-web-scrapping/pkg/utils"
 )
 
 type IDrawingLotteryService interface {
+	CreateDrawingLottery(lottery *models.DrawingLottery) error
 	FindLotteryByNumber(number string, date string) (interface{}, bool)
 	FindLotteryByDate(date string) (interface{}, error)
 }
@@ -17,6 +19,10 @@ type DrawingLotteryService struct {
 
 func NewDrawingLotteryService(r repositories.IDrawingLotteryRepository) IDrawingLotteryService {
 	return &DrawingLotteryService{repository: r}
+}
+
+func (r *DrawingLotteryService) CreateDrawingLottery(lottery *models.DrawingLottery) error {
+	return r.repository.CreateLottery(lottery)
 }
 
 func (r *DrawingLotteryService) FindLotteryByNumber(number string, date string) (interface{}, bool) {

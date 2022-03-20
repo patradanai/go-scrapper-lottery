@@ -1,8 +1,9 @@
-package webscraper
+package webscrapper
 
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"lottery-web-scrapping/internal/models"
 	"lottery-web-scrapping/pkg/utils"
 	"time"
@@ -115,11 +116,11 @@ func GetLotteryByDate(link string) (*models.DrawingLottery, error) {
 	})
 
 	c.OnResponse(func(r *colly.Response) {
-		fmt.Println("Got a response from", r.Request.URL)
+		log.Println("Got a response from", r.Request.URL)
 	})
 
 	c.OnError(func(r *colly.Response, e error) {
-		fmt.Println("Got this error:", e)
+		log.Println("Got this error:", e)
 	})
 
 	if err := c.Visit(url); err != nil {
@@ -137,13 +138,13 @@ func FindAllDrawingDate() ([]models.LotteryLink, error) {
 	paramLink := make([]models.LotteryLink, 0)
 
 	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting", r.URL)
+		log.Println("Visiting", r.URL)
 	})
 
 	c.OnHTML("main[class=article-main]", func(e *colly.HTMLElement) {
 		e.ForEach("section[class=history-check]", func(_ int, h *colly.HTMLElement) {
 			h.ForEach("ul > li", func(_ int, l *colly.HTMLElement) {
-				// fmt.Printf("Date : %v, %v \n", l.ChildText("strong"), l.ChildAttr("a", "href"))
+				// log.Printf("Date : %v, %v \n", l.ChildText("strong"), l.ChildAttr("a", "href"))
 				param := models.LotteryLink{}
 				param.Date = l.ChildText("a > strong")
 				param.Link = "https://lottery.kapook.com" + l.ChildAttr("a", "href")
@@ -153,11 +154,11 @@ func FindAllDrawingDate() ([]models.LotteryLink, error) {
 	})
 
 	c.OnResponse(func(r *colly.Response) {
-		fmt.Println("Got a response from", r.Request.URL)
+		log.Println("Got a response from", r.Request.URL)
 	})
 
 	c.OnError(func(r *colly.Response, e error) {
-		fmt.Println("Got this error:", e)
+		log.Println("Got this error:", e)
 	})
 
 	c.Visit(url)

@@ -5,7 +5,7 @@ import (
 	"lottery-web-scrapping/internal/models"
 	"lottery-web-scrapping/internal/repositories"
 	"lottery-web-scrapping/pkg/utils"
-	webscraper "lottery-web-scrapping/pkg/web-scraper"
+	webscrapper "lottery-web-scrapping/pkg/web-scrapper"
 	"time"
 )
 
@@ -24,10 +24,12 @@ func NewDrawingDateService(r repositories.IDrawingDateRepository) IDrawingDateSe
 
 func (r *DrawingDateService) CreateAllDate() ([]models.LotteryLink, error) {
 
-	paramLink, err := webscraper.FindAllDrawingDate()
+	paramLink, err := webscrapper.FindAllDrawingDate()
 	if err != nil {
 		return nil, err
 	}
+
+	addDrawing := make([]models.LotteryLink, 0)
 
 	for _, dateEn := range paramLink {
 
@@ -44,6 +46,9 @@ func (r *DrawingDateService) CreateAllDate() ([]models.LotteryLink, error) {
 			continue
 		}
 
+		// Add in Slice
+		addDrawing = append(addDrawing, dateEn)
+
 		// Create Date
 		lotteryDate := &models.DrawingDate{
 			DateThai:    date["Monthly"],
@@ -59,12 +64,10 @@ func (r *DrawingDateService) CreateAllDate() ([]models.LotteryLink, error) {
 		if err := r.repository.CreateDrawingDate(lotteryDate); err != nil {
 			panic(err)
 		}
-
 	}
 
-	// fmt.Println(string(jsonData))
+	return addDrawing, nil
 
-	return paramLink, nil
 }
 
 func (r *DrawingDateService) FindDrawingDate(date string) error {

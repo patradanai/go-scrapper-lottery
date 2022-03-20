@@ -11,6 +11,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+
+	schedule "lottery-web-scrapping/internal/scheduler"
 )
 
 func main() {
@@ -26,6 +28,9 @@ func main() {
 	}
 
 	fmt.Println("Connection to Mongo")
+
+	// Scheduler
+	schedule.Handler()
 
 	server := &http.Server{
 		Addr:           ":8080",
