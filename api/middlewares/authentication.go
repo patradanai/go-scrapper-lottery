@@ -4,6 +4,7 @@ import (
 	"lottery-web-scrapping/driver"
 	"lottery-web-scrapping/internal/repositories"
 	"lottery-web-scrapping/internal/services"
+	httpError "lottery-web-scrapping/pkg/http-error"
 	"lottery-web-scrapping/pkg/utils"
 
 	"net/http"
@@ -22,7 +23,7 @@ func Authentication() gin.HandlerFunc {
 		// Binding JSON
 		userLogin := UserLogin{}
 		if err := c.ShouldBindJSON(&userLogin); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Please Check your body"})
+			httpError.NewBadRequest(c, nil)
 			return
 		}
 
@@ -32,13 +33,13 @@ func Authentication() gin.HandlerFunc {
 
 		user, err := userService.FindByUser(userLogin.Username)
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"success": false, "message": "user not exist in system"})
+			httpError.NewRequestNotFound(c, nil)
 			return
 		}
 
 		// Check Password
 		if utils.DecryptPwd(user.Password, userLogin.Password) {
-			c.JSON(http.StatusUnauthorized, gin.H{"success": false, "message": "user or password invalid"})
+			httpError.NewBadRequest(c, "user or password invalid")
 			return
 		}
 
@@ -46,7 +47,7 @@ func Authentication() gin.HandlerFunc {
 		jwtService := utils.NewJWTService()
 		token, err := jwtService.GenerateToken(user.ID.String())
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "something went wrong"})
+			httpError.NewInternalServerError(c, nil)
 			return
 		}
 
@@ -55,7 +56,7 @@ func Authentication() gin.HandlerFunc {
 		refreshRepo := repositories.NewRefreshTokenRepository(driver.ClientMongo)
 		refreshService := services.NewRefreshTokenService(refreshRepo)
 		if err := refreshService.CreateRefreshToken(tokenRefresh, 15); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "something went wrong"})
+			httpError.NewInternalServerError(c, nil)
 			return
 		}
 

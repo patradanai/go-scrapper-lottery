@@ -1,9 +1,8 @@
-package routes
+package router
 
 import (
 	"lottery-web-scrapping/api/handler"
-	v1 "lottery-web-scrapping/api/routes/v1"
-	"net/http"
+	v1 "lottery-web-scrapping/api/router/v1"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,11 +12,6 @@ func InitialRouter(handler *handler.Handler) *gin.Engine {
 
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusAccepted, "ROOT WEB")
-		return
-	})
 
 	// Api V1
 	v1API := r.Group("/api/v1")

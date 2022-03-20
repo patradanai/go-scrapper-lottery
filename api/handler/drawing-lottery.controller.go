@@ -60,3 +60,7 @@ func (h *Handler) FindLotteryByNumber(c *gin.Context) {
 	}
 	c.JSON(http.StatusAccepted, gin.H{"success": true, "drawing_date": params.DateID, "winner": false, "lottery": params.Number, "message": "โดนหวยแดก"})
 }
+
+func (h *Handler) FindLotteriesDate(c *gin.Context) {
+
+}

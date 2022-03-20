@@ -10,6 +10,7 @@ import (
 type Handler struct {
 	LotteryService     services.IDrawingLotteryService
 	DrawingDateService services.IDrawingDateService
+	UserService        services.IUserService
 }
 
 func NewHanlder(c *mongo.Client) *Handler {
@@ -19,5 +20,8 @@ func NewHanlder(c *mongo.Client) *Handler {
 	drawingDateRepo := repositories.NewDrawingDateRepository(c)
 	drawingDateService := services.NewDrawingDateService(drawingDateRepo)
 
-	return &Handler{LotteryService: lotteryService, DrawingDateService: drawingDateService}
+	userRepo := repositories.NewUserRepository(c)
+	userService := services.NewUserService(userRepo)
+
+	return &Handler{LotteryService: lotteryService, DrawingDateService: drawingDateService, UserService: userService}
 }

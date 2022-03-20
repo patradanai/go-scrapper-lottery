@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"lottery-web-scrapping/api/handler"
-	"lottery-web-scrapping/api/routes"
+	"lottery-web-scrapping/api/router"
 	"lottery-web-scrapping/driver"
 	"net/http"
 	"os"
@@ -22,7 +22,7 @@ func main() {
 	// Init Mongo Connection
 	c := driver.ConnectionMongo()
 	h := handler.NewHanlder(c)
-	r := routes.InitialRouter(h)
+	r := router.InitialRouter(h)
 
 	if err := driver.ConnectionRedis(); err != nil {
 		panic(err)
