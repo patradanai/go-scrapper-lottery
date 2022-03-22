@@ -31,8 +31,8 @@ func Authentication() gin.HandlerFunc {
 		userRepo := repositories.NewUserRepository(driver.ClientMongo)
 		userService := services.NewUserService(userRepo)
 
-		user, err := userService.FindByUser(userLogin.Username)
-		if err != nil {
+		user, exist := userService.FindByUser(userLogin.Username)
+		if !exist {
 			httpError.NewRequestNotFound(c, nil)
 			return
 		}

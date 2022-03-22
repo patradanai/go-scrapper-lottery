@@ -3,10 +3,13 @@ package services
 import (
 	"lottery-web-scrapping/internal/models"
 	"lottery-web-scrapping/internal/repositories"
+
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type IUserService interface {
-	FindByUser(username string) (*models.User, error)
+	CreateUser(user *models.User) error
+	FindByUser(username string) (*models.User, bool)
 	FindById(id string) (*models.User, error)
 }
 
@@ -18,16 +21,23 @@ func NewUserService(r repositories.IUserRepository) IUserService {
 	return &UserService{r}
 }
 
-func (s *UserService) FindByUser(username string) (*models.User, error) {
-	result, err := s.FindByUser(username)
+func (s *UserService) CreateUser(user *models.User) error {
+	return s.repository.CreateOne(user)
+}
+
+func (s *UserService) FindByUser(username string) (*models.User, bool) {
+	result, err := s.repository.FindUser(username)
 	if err != nil {
-		return nil, err
+		if err == mongo.ErrNoDocuments {
+			return nil, false
+		}
+		return nil, true
 	}
-	return result, nil
+	return result, false
 }
 
 func (s *UserService) FindById(id string) (*models.User, error) {
-	result, err := s.FindById(id)
+	result, err := s.repository.FindId(id)
 	if err != nil {
 		return nil, err
 	}

@@ -11,8 +11,9 @@ import (
 )
 
 type IUserRepository interface {
-	FindById(username string) (*models.User, error)
-	FindByUser(user string) (*models.User, error)
+	CreateOne(user *models.User) error
+	FindId(username string) (*models.User, error)
+	FindUser(user string) (*models.User, error)
 }
 
 type UserRepository struct {
@@ -25,8 +26,20 @@ func NewUserRepository(c *mongo.Client) IUserRepository {
 	}
 }
 
-func (c *UserRepository) FindById(id string) (*models.User, error) {
-	userCollection := c.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("drawing_lottery")
+func (c *UserRepository) CreateOne(user *models.User) error {
+	userCollection := c.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("users")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if _, err := userCollection.InsertOne(ctx, user); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *UserRepository) FindId(id string) (*models.User, error) {
+	userCollection := c.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("users")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -39,8 +52,8 @@ func (c *UserRepository) FindById(id string) (*models.User, error) {
 	return &user, nil
 }
 
-func (c *UserRepository) FindByUser(username string) (*models.User, error) {
-	userCollection := c.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("drawing_lottery")
+func (c *UserRepository) FindUser(username string) (*models.User, error) {
+	userCollection := c.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("users")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
