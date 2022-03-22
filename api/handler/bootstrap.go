@@ -8,9 +8,11 @@ import (
 )
 
 type Handler struct {
-	LotteryService     services.IDrawingLotteryService
-	DrawingDateService services.IDrawingDateService
-	UserService        services.IUserService
+	lotteryService      services.IDrawingLotteryService
+	drawingDateService  services.IDrawingDateService
+	userService         services.IUserService
+	oauthService        services.IOAuthClientService
+	refreshTokenService services.IRefreshTokenService
 }
 
 func NewHanlder(c *mongo.Client) *Handler {
@@ -23,5 +25,11 @@ func NewHanlder(c *mongo.Client) *Handler {
 	userRepo := repositories.NewUserRepository(c)
 	userService := services.NewUserService(userRepo)
 
-	return &Handler{LotteryService: lotteryService, DrawingDateService: drawingDateService, UserService: userService}
+	oauthRepo := repositories.NewOAuthClientRepository(c)
+	oathService := services.NewOAuthClientService(oauthRepo)
+
+	refreshTokenRepo := repositories.NewRefreshTokenRepository(c)
+	refreshTokenService := services.NewRefreshTokenService(refreshTokenRepo)
+
+	return &Handler{lotteryService: lotteryService, drawingDateService: drawingDateService, userService: userService, oauthService: oathService, refreshTokenService: refreshTokenService}
 }

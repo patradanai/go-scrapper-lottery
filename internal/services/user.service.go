@@ -1,6 +1,7 @@
 package services
 
 import (
+	"log"
 	"lottery-web-scrapping/internal/models"
 	"lottery-web-scrapping/internal/repositories"
 
@@ -31,9 +32,10 @@ func (s *UserService) FindByUser(username string) (*models.User, bool) {
 		if err == mongo.ErrNoDocuments {
 			return nil, false
 		}
-		return nil, true
+		return nil, false
 	}
-	return result, false
+	log.Println(result)
+	return result, true
 }
 
 func (s *UserService) FindById(id string) (*models.User, error) {

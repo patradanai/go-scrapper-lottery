@@ -11,5 +11,5 @@ func AuthRouter(r *gin.RouterGroup, handler *handler.Handler) {
 	r.POST("/signup", handler.SignUp)
 	r.POST("/signin", middlewares.Authentication())
 	r.POST("/signout")
-	r.POST("/refresh")
+	r.POST("/refresh", handler.RefreshToken)
 }

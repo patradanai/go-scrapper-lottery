@@ -38,7 +38,7 @@ func Authentication() gin.HandlerFunc {
 		}
 
 		// Check Password
-		if utils.DecryptPwd(user.Password, userLogin.Password) {
+		if !utils.DecryptPwd(user.Password, userLogin.Password) {
 			httpError.NewBadRequest(c, "user or password invalid")
 			return
 		}
@@ -47,7 +47,7 @@ func Authentication() gin.HandlerFunc {
 		jwtService := utils.NewJWTService()
 		token, err := jwtService.GenerateToken(user.ID.String())
 		if err != nil {
-			httpError.NewInternalServerError(c, nil)
+			httpError.NewInternalServerError(c, err.Error())
 			return
 		}
 
@@ -56,7 +56,7 @@ func Authentication() gin.HandlerFunc {
 		refreshRepo := repositories.NewRefreshTokenRepository(driver.ClientMongo)
 		refreshService := services.NewRefreshTokenService(refreshRepo)
 		if err := refreshService.CreateRefreshToken(tokenRefresh, 15); err != nil {
-			httpError.NewInternalServerError(c, nil)
+			httpError.NewInternalServerError(c, err.Error())
 			return
 		}
 
@@ -68,7 +68,7 @@ func Authentication() gin.HandlerFunc {
 		data["refresh_token"] = tokenRefresh
 		data["roles"] = ""
 
-		c.JSON(http.StatusOK, gin.H{"success": true})
+		c.JSON(http.StatusOK, gin.H{"success": true, "data": data})
 
 	}
 }
