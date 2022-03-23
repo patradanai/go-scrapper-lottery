@@ -73,3 +73,7 @@ func NewUnauthorize(ctx *gin.Context, message interface{}) {
 
 	ctx.JSON(http.StatusUnauthorized, responseError)
 }
+
+func NewCtxResponse() {
+
+}

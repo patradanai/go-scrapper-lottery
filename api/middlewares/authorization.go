@@ -13,11 +13,11 @@ import (
 )
 
 type HeaderToken struct {
-	Token string `header:"Authorization"`
+	Token string `header:"Authorization" binding:"required"`
 }
 
 type HeaderAPI struct {
-	ApiKey string `header:"x-api-key"`
+	ApiKey string `header:"x-api-key" binding:"required"`
 }
 
 func AuthorizationJWT() gin.HandlerFunc {
@@ -25,20 +25,27 @@ func AuthorizationJWT() gin.HandlerFunc {
 		tokenModel := HeaderToken{}
 		if err := c.ShouldBindHeader(&tokenModel); err != nil {
 			httpError.NewUnauthorize(c, "not exist token in header")
+			c.Abort()
 			return
 		}
 
 		token := strings.Split(tokenModel.Token, "Bearer ")
-
-		jwtService := utils.NewJWTService()
-
-		claims, err := jwtService.ValidateToken(token[0])
-		if err != nil {
-			httpError.NewInternalServerError(c, nil)
+		if len(token) < 2 {
+			httpError.NewBadRequest(c, "please check you token")
+			c.Abort()
 			return
 		}
 
-		c.Set("userId", claims.Id)
+		jwtService := utils.NewJWTService()
+
+		claims, err := jwtService.ValidateToken(token[1])
+		if err != nil {
+			httpError.NewInternalServerError(c, err.Error())
+			c.Abort()
+			return
+		}
+
+		c.Set("userId", claims.UserId)
 
 		c.Next()
 	}
@@ -49,8 +56,8 @@ func AuthorizationAPIKey() gin.HandlerFunc {
 		apiModel := HeaderAPI{}
 
 		if err := c.ShouldBindHeader(&apiModel); err != nil {
-			httpError.NewUnauthorize(c, "not exist token in header")
-
+			httpError.NewBadRequest(c, "not exist token in header")
+			c.Abort()
 			return
 		}
 
@@ -60,6 +67,7 @@ func AuthorizationAPIKey() gin.HandlerFunc {
 		result, err := oauthService.FindOAuthClient(apiModel.ApiKey)
 		if err != nil {
 			httpError.NewUnauthorize(c, "not exist api key")
+			c.Abort()
 			return
 		}
 

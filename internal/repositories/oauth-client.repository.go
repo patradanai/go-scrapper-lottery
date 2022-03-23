@@ -8,10 +8,12 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IOAuthClientRepository interface {
 	CreateOneOAuthClient(oauth *models.OauthClient) error
+	UpdateOne(filter bson.M, update interface{}, opt *options.FindOneAndUpdateOptions) error
 	FindOneOAuthClient(filter bson.M) (*models.OauthClient, error)
 }
 
@@ -49,4 +51,19 @@ func (r *BaseRepository) FindOneOAuthClient(filter bson.M) (*models.OauthClient,
 	}
 
 	return &oauthClient, nil
+}
+
+func (r *BaseRepository) UpdateOne(filter bson.M, update interface{}, opt *options.FindOneAndUpdateOptions) error {
+	oauthClientCollection := r.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("oauth_clients")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	oauthClient := models.OauthClient{}
+
+	if err := oauthClientCollection.FindOneAndUpdate(ctx, filter, update, opt).Decode(&oauthClient); err != nil {
+
+		return err
+	}
+
+	return nil
 }

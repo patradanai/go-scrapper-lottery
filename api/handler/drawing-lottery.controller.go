@@ -1,6 +1,7 @@
 package handler
 
 import (
+	httpError "lottery-web-scrapping/pkg/http-error"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,22 +21,22 @@ func (h *Handler) FindLotteryByDate(c *gin.Context) {
 	// Binding
 	params := paramsDate{}
 	if err := c.ShouldBindUri(&params); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Please Check parameter uri"})
+		httpError.NewBadRequest(c, "please Check parameter uri")
 		return
 	}
 
 	if err := h.drawingDateService.FindDrawingDate(params.DateID); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Drawing Date not existing"})
+		httpError.NewBadRequest(c, "drawing Date not existing")
 		return
 	}
 	// Find Drawing By Date
 	result, err := h.lotteryService.FindLotteryByDate(params.DateID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "message": "Somthing went wrong"})
+		httpError.NewInternalServerError(c, "something went wrong")
 		return
 	}
 
-	c.JSON(http.StatusAccepted, gin.H{"success": true, "drawing_date": params.DateID, "result": result})
+	c.JSON(http.StatusOK, gin.H{"success": true, "drawing_date": params.DateID, "result": result})
 }
 
 func (h *Handler) FindLotteryByNumber(c *gin.Context) {
@@ -43,22 +44,22 @@ func (h *Handler) FindLotteryByNumber(c *gin.Context) {
 	// Binding
 	params := paramNumber{}
 	if err := c.ShouldBindUri(&params); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Please Check parameter uri"})
+		httpError.NewBadRequest(c, "please Check parameter uri")
 		return
 	}
 
 	if err := h.drawingDateService.FindDrawingDate(params.DateID); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "Drawing Date not existing"})
+		httpError.NewBadRequest(c, "drawing Date not existing")
 		return
 	}
 
 	// Find Number by Date
 	result, exist := h.lotteryService.FindLotteryByNumber(params.Number, params.DateID)
 	if exist {
-		c.JSON(http.StatusAccepted, gin.H{"success": true, "drawing_date": params.DateID, "winner": true, "lottery": params.Number, "result": result})
+		c.JSON(http.StatusOK, gin.H{"success": true, "drawing_date": params.DateID, "winner": true, "lottery": params.Number, "result": result})
 		return
 	}
-	c.JSON(http.StatusAccepted, gin.H{"success": true, "drawing_date": params.DateID, "winner": false, "lottery": params.Number, "message": "โดนหวยแดก"})
+	c.JSON(http.StatusOK, gin.H{"success": true, "drawing_date": params.DateID, "winner": false, "lottery": params.Number, "message": "โดนหวยแดก"})
 }
 
 func (h *Handler) FindLotteriesDate(c *gin.Context) {

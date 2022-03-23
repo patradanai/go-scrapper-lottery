@@ -14,6 +14,7 @@ type IJWTService interface {
 }
 
 type Claims struct {
+	UserId string
 	jwt.StandardClaims
 }
 
@@ -34,7 +35,8 @@ func (s *jwtService) GenerateToken(userId string) (string, error) {
 
 	claims :=
 		Claims{
-			jwt.StandardClaims{Id: userId, Issuer: s.issue, ExpiresAt: expiredTime},
+			UserId:         userId,
+			StandardClaims: jwt.StandardClaims{Issuer: s.issue, ExpiresAt: expiredTime},
 		}
 
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

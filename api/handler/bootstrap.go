@@ -13,6 +13,7 @@ type Handler struct {
 	userService         services.IUserService
 	oauthService        services.IOAuthClientService
 	refreshTokenService services.IRefreshTokenService
+	roleService         services.IRoleService
 }
 
 func NewHanlder(c *mongo.Client) *Handler {
@@ -31,5 +32,8 @@ func NewHanlder(c *mongo.Client) *Handler {
 	refreshTokenRepo := repositories.NewRefreshTokenRepository(c)
 	refreshTokenService := services.NewRefreshTokenService(refreshTokenRepo)
 
-	return &Handler{lotteryService: lotteryService, drawingDateService: drawingDateService, userService: userService, oauthService: oathService, refreshTokenService: refreshTokenService}
+	roleRepo := repositories.NewRoleRepository(c)
+	roleService := services.NewRoleService(roleRepo)
+
+	return &Handler{lotteryService: lotteryService, drawingDateService: drawingDateService, userService: userService, roleService: roleService, oauthService: oathService, refreshTokenService: refreshTokenService}
 }

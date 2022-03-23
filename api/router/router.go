@@ -16,8 +16,14 @@ func InitialRouter(handler *handler.Handler) *gin.Engine {
 	// Api V1
 	v1API := r.Group("/api/v1")
 	{
-		// Auth
-		v1.AuthRouter(v1API.Group("/auth"), handler)
+		auth := v1API.Group("/auth")
+		{
+			// Auth
+			v1.AuthRouter(auth, handler)
+
+			// Oauth
+			v1.OauthRouter(auth, handler)
+		}
 
 		// Lotery
 		v1.LotteryRouter(v1API.Group("/lottery"), handler)
