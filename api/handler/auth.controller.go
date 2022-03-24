@@ -46,8 +46,7 @@ func (h *Handler) SignUp(c *gin.Context) {
 }
 
 type refreshTokenBody struct {
-	RefreshToken string `json:"refresh_token"`
-	UserID       string `json:"user_id"`
+	RefreshToken string `json:"refresh_token" binding:"required"`
 }
 
 func (h *Handler) RefreshToken(c *gin.Context) {
@@ -59,7 +58,7 @@ func (h *Handler) RefreshToken(c *gin.Context) {
 	}
 
 	// Valdate RefreshToken
-	result, err := h.refreshTokenService.ValidateRefreshToken(refreshToken.RefreshToken, refreshToken.UserID)
+	result, err := h.refreshTokenService.ValidateRefreshToken(refreshToken.RefreshToken)
 	if err != nil {
 		httpError.NewBadRequest(c, "refresh token is expired")
 		return

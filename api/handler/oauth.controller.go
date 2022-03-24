@@ -1,7 +1,7 @@
 package handler
 
 import (
-	httperror "lottery-web-scrapping/pkg/http-error"
+	httpError "lottery-web-scrapping/pkg/http-error"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +17,7 @@ func (h *Handler) CreateOAuth(c *gin.Context) {
 	clientSecret, _ := gonanoid.New(32)
 
 	if err := h.oauthService.CreateOAuthClient(userId, apiKey, clientId, clientSecret); err != nil {
-		httperror.NewBadRequest(c, err.Error())
+		httpError.NewBadRequest(c, err.Error())
 		return
 	}
 
@@ -38,7 +38,7 @@ func (h *Handler) UpdateOAuth(c *gin.Context) {
 	clientSecret, _ := gonanoid.New(32)
 
 	if err := h.oauthService.UpdateOAuthClient(userId, oauthId, apiKey, clientId, clientSecret); err != nil {
-		httperror.NewBadRequest(c, err.Error())
+		httpError.NewBadRequest(c, err.Error())
 		return
 	}
 
@@ -48,4 +48,22 @@ func (h *Handler) UpdateOAuth(c *gin.Context) {
 	data["clientSecret"] = clientSecret
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": data})
+}
+
+func (h *Handler) GetOAuth(c *gin.Context) {
+	userId := c.MustGet("userId").(string)
+
+	oauth, err := h.oauthService.FindOAuthByIDClient(userId)
+	if err != nil {
+		httpError.NewBadRequest(c, err.Error())
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["success"] = true
+	data["apiKey"] = oauth.ApiKey
+	data["clientId"] = oauth.ClientId
+	data["clientSecret"] = oauth.ClientSecret
+
+	c.JSON(http.StatusOK, data)
 }

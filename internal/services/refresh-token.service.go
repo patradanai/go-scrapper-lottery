@@ -10,7 +10,7 @@ import (
 
 type IRefreshTokenService interface {
 	CreateRefreshToken(token string, expired int) error
-	ValidateRefreshToken(token string, userId string) (*models.RefreshToken, error)
+	ValidateRefreshToken(token string) (*models.RefreshToken, error)
 }
 
 type RefreshTokenService struct {
@@ -36,8 +36,8 @@ func (s *RefreshTokenService) CreateRefreshToken(token string, expired int) erro
 	return nil
 }
 
-func (s *RefreshTokenService) ValidateRefreshToken(token string, userId string) (*models.RefreshToken, error) {
-	refreshToken, err := s.repository.FindOne(token, userId)
+func (s *RefreshTokenService) ValidateRefreshToken(token string) (*models.RefreshToken, error) {
+	refreshToken, err := s.repository.FindOne(token)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err

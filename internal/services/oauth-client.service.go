@@ -38,7 +38,8 @@ func (s *OAuthClientService) FindOAuthClient(apiKey string) (*models.OauthClient
 }
 
 func (s *OAuthClientService) FindOAuthByIDClient(userId string) (*models.OauthClient, error) {
-	filter := bson.M{"user_id": userId}
+	obj, _ := primitive.ObjectIDFromHex(userId)
+	filter := bson.M{"user_id": obj}
 
 	oauth, err := s.repository.FindOneOAuthClient(filter)
 	if err != nil {
@@ -63,18 +64,15 @@ func (s *OAuthClientService) CreateOAuthClient(userId string, apiKey string, cli
 }
 
 func (s *OAuthClientService) UpdateOAuthClient(userId string, oauthId string, apiKey string, clientId string, clientSecret string) error {
-	filter := bson.M{"user_id": userId, "_id": oauthId}
+	userObj, _ := primitive.ObjectIDFromHex(userId)
+	oauthObj, _ := primitive.ObjectIDFromHex(oauthId)
+	filter := bson.M{"user_id": userObj, "_id": oauthObj}
 	after := options.After
 	opts := &options.FindOneAndUpdateOptions{
 		ReturnDocument: &after,
 	}
-	oAuth := &models.OauthClient{
-		ApiKey:       apiKey,
-		ClientId:     clientId,
-		ClientSecret: clientSecret,
-		Revoke:       false,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
-	}
-	return s.repository.UpdateOne(filter, oAuth, opts)
+
+	updates := bson.M{"$set": bson.M{"api_key": apiKey, "client_id": clientId, "client_secret": clientSecret, "updated_at": time.Now()}}
+
+	return s.repository.UpdateOne(filter, updates, opts)
 }

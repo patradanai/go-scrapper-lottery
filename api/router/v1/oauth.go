@@ -8,7 +8,10 @@ import (
 )
 
 func OauthRouter(r *gin.RouterGroup, handler *handler.Handler) {
-	r.GET("/oauth", middlewares.AuthorizationJWT())
-	r.POST("/oauth", middlewares.AuthorizationJWT(), handler.CreateOAuth)
-	r.PATCH("/oauth/:oauthId", middlewares.AuthorizationJWT())
+	r.Use(middlewares.AuthorizationJWT())
+	{
+		r.GET("/oauth", handler.GetOAuth)
+		r.POST("/oauth", handler.CreateOAuth)
+		r.PATCH("/oauth/:oauthId", handler.UpdateOAuth)
+	}
 }

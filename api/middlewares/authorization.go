@@ -13,7 +13,7 @@ import (
 )
 
 type HeaderToken struct {
-	Token string `header:"Authorization" binding:"required"`
+	Token string `header:"Authorization"`
 }
 
 type HeaderAPI struct {
