@@ -2,7 +2,7 @@ package services
 
 import (
 	"lottery-web-scrapping/internal/models"
-	"lottery-web-scrapping/internal/repositories"
+	"lottery-web-scrapping/internal/role/repository"
 )
 
 type IRoleService interface {
@@ -10,10 +10,10 @@ type IRoleService interface {
 }
 
 type RoleService struct {
-	repository repositories.IRoleRepository
+	repository repository.IRoleRepository
 }
 
-func NewRoleService(r repositories.IRoleRepository) IRoleService {
+func NewRoleService(r repository.IRoleRepository) IRoleService {
 	return &RoleService{r}
 }
 

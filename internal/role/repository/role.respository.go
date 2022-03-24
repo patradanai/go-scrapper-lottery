@@ -1,4 +1,4 @@
-package repositories
+package repository
 
 import (
 	"context"
@@ -15,16 +15,16 @@ type IRoleRepository interface {
 }
 
 type RoleRepository struct {
-	BaseRepository
+	*mongo.Client
 }
 
 func NewRoleRepository(c *mongo.Client) IRoleRepository {
 	return &RoleRepository{
-		BaseRepository{c},
+		c,
 	}
 }
 
-func (r *BaseRepository) FindByName(name string) (*models.Role, error) {
+func (r *RoleRepository) FindByName(name string) (*models.Role, error) {
 	roleCollection := r.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("roles")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

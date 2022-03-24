@@ -1,4 +1,4 @@
-package repositories
+package repository
 
 import (
 	"context"
@@ -15,16 +15,14 @@ type IPermissionRepository interface {
 }
 
 type PermissionRepository struct {
-	BaseRepository
+	*mongo.Client
 }
 
 func NewPermissionRepository(c *mongo.Client) IPermissionRepository {
-	return &PermissionRepository{
-		BaseRepository{c},
-	}
+	return &PermissionRepository{c}
 }
 
-func (r *BaseRepository) FindAllPermission() ([]models.Permission, error) {
+func (r *PermissionRepository) FindAllPermission() ([]models.Permission, error) {
 	permissionCollection := r.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("permissions")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -51,7 +49,7 @@ func (r *BaseRepository) FindAllPermission() ([]models.Permission, error) {
 	return permissions, nil
 }
 
-func (r *BaseRepository) FindOnePermission(filter string) (*models.Permission, error) {
+func (r *PermissionRepository) FindOnePermission(filter string) (*models.Permission, error) {
 	permissionCollection := r.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("permissions")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

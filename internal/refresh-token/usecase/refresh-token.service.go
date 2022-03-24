@@ -1,10 +1,10 @@
-package services
+package usecase
 
 import (
 	"fmt"
 	"log"
 	"lottery-web-scrapping/internal/models"
-	"lottery-web-scrapping/internal/repositories"
+	"lottery-web-scrapping/internal/refresh-token/repository"
 	"time"
 )
 
@@ -14,10 +14,10 @@ type IRefreshTokenService interface {
 }
 
 type RefreshTokenService struct {
-	repository repositories.IRefreshTokenRepository
+	repository repository.IRefreshTokenRepository
 }
 
-func NewRefreshTokenService(r repositories.IRefreshTokenRepository) IRefreshTokenService {
+func NewRefreshTokenService(r repository.IRefreshTokenRepository) IRefreshTokenService {
 	return &RefreshTokenService{r}
 }
 

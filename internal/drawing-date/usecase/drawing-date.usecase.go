@@ -1,9 +1,9 @@
-package services
+package usecase
 
 import (
 	"fmt"
+	"lottery-web-scrapping/internal/drawing-date/repository"
 	"lottery-web-scrapping/internal/models"
-	"lottery-web-scrapping/internal/repositories"
 	"lottery-web-scrapping/pkg/utils"
 	webscrapper "lottery-web-scrapping/pkg/web-scrapper"
 	"time"
@@ -15,10 +15,10 @@ type IDrawingDateService interface {
 }
 
 type DrawingDateService struct {
-	repository repositories.IDrawingDateRepository
+	repository repository.IDrawingDateRepository
 }
 
-func NewDrawingDateService(r repositories.IDrawingDateRepository) IDrawingDateService {
+func NewDrawingDateService(r repository.IDrawingDateRepository) IDrawingDateService {
 	return &DrawingDateService{repository: r}
 }
 

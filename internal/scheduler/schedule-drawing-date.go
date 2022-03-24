@@ -3,16 +3,18 @@ package scheduler
 import (
 	"log"
 	"lottery-web-scrapping/driver"
-	"lottery-web-scrapping/internal/repositories"
-	"lottery-web-scrapping/internal/services"
+	drawingDateRepo "lottery-web-scrapping/internal/drawing-date/repository"
+	drawingDateUsecase "lottery-web-scrapping/internal/drawing-date/usecase"
+	drawingLotteryRepo "lottery-web-scrapping/internal/drawing-lottery/repository"
+	drawingLotteryUsecase "lottery-web-scrapping/internal/drawing-lottery/usecase"
 	webscrapper "lottery-web-scrapping/pkg/web-scrapper"
 )
 
 func ScheduleDrawingDate() {
 	log.Println("################## Cron Job : Running Drawing Date #################")
 	// Date
-	drawingDateRepo := repositories.NewDrawingDateRepository(driver.ClientMongo)
-	drawingDateService := services.NewDrawingDateService(drawingDateRepo)
+	drawingDateRepo := drawingDateRepo.NewDrawingDateRepository(driver.ClientMongo)
+	drawingDateService := drawingDateUsecase.NewDrawingDateService(drawingDateRepo)
 
 	lotterys, err := drawingDateService.CreateAllDate()
 	if err != nil {
@@ -20,8 +22,8 @@ func ScheduleDrawingDate() {
 	}
 
 	// Lottery
-	drawingLotteryRepo := repositories.NewDrawingLotteryRepository(driver.ClientMongo)
-	drawingLotteryService := services.NewDrawingLotteryService(drawingLotteryRepo)
+	drawingLotteryRepo := drawingLotteryRepo.NewDrawingLotteryRepository(driver.ClientMongo)
+	drawingLotteryService := drawingLotteryUsecase.NewDrawingLotteryService(drawingLotteryRepo)
 
 	for _, lottery := range lotterys {
 		data, err := webscrapper.GetLotteryByDate(lottery.Link)

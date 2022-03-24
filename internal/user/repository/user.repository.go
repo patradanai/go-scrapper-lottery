@@ -1,4 +1,4 @@
-package repositories
+package repository
 
 import (
 	"context"
@@ -17,12 +17,12 @@ type IUserRepository interface {
 }
 
 type UserRepository struct {
-	BaseRepository
+	*mongo.Client
 }
 
 func NewUserRepository(c *mongo.Client) IUserRepository {
 	return &UserRepository{
-		BaseRepository{c},
+		c,
 	}
 }
 

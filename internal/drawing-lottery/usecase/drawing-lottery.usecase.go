@@ -2,8 +2,8 @@ package services
 
 import (
 	"fmt"
+	"lottery-web-scrapping/internal/drawing-lottery/repository"
 	"lottery-web-scrapping/internal/models"
-	"lottery-web-scrapping/internal/repositories"
 	"lottery-web-scrapping/pkg/utils"
 )
 
@@ -14,10 +14,10 @@ type IDrawingLotteryService interface {
 }
 
 type DrawingLotteryService struct {
-	repository repositories.IDrawingLotteryRepository
+	repository repository.IDrawingLotteryRepository
 }
 
-func NewDrawingLotteryService(r repositories.IDrawingLotteryRepository) IDrawingLotteryService {
+func NewDrawingLotteryService(r repository.IDrawingLotteryRepository) IDrawingLotteryService {
 	return &DrawingLotteryService{repository: r}
 }
 

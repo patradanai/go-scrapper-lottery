@@ -1,4 +1,4 @@
-package repositories
+package repository
 
 import (
 	"context"
@@ -16,16 +16,16 @@ type IRefreshTokenRepository interface {
 }
 
 type RefreshTokenRepository struct {
-	BaseRepository
+	*mongo.Client
 }
 
 func NewRefreshTokenRepository(c *mongo.Client) IRefreshTokenRepository {
 	return &RefreshTokenRepository{
-		BaseRepository{c},
+		c,
 	}
 }
 
-func (r *BaseRepository) CreateOne(token *models.RefreshToken) error {
+func (r *RefreshTokenRepository) CreateOne(token *models.RefreshToken) error {
 	refreshTokenCollection := r.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("refresh_tokens")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -37,7 +37,7 @@ func (r *BaseRepository) CreateOne(token *models.RefreshToken) error {
 	return nil
 }
 
-func (r *BaseRepository) FindOne(token string) (*models.RefreshToken, error) {
+func (r *RefreshTokenRepository) FindOne(token string) (*models.RefreshToken, error) {
 	refreshTokenCollection := r.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("refresh_tokens")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

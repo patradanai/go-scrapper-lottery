@@ -2,8 +2,10 @@ package middlewares
 
 import (
 	"lottery-web-scrapping/driver"
-	"lottery-web-scrapping/internal/repositories"
-	"lottery-web-scrapping/internal/services"
+	refreshRepo "lottery-web-scrapping/internal/refresh-token/repository"
+	refreshUsecase "lottery-web-scrapping/internal/refresh-token/usecase"
+	userRepo "lottery-web-scrapping/internal/user/repository"
+	userUsecase "lottery-web-scrapping/internal/user/usecase"
 	httpError "lottery-web-scrapping/pkg/http-error"
 	"lottery-web-scrapping/pkg/utils"
 
@@ -28,8 +30,8 @@ func Authentication() gin.HandlerFunc {
 		}
 
 		// Find User
-		userRepo := repositories.NewUserRepository(driver.ClientMongo)
-		userService := services.NewUserService(userRepo)
+		userRepo := userRepo.NewUserRepository(driver.ClientMongo)
+		userService := userUsecase.NewUserService(userRepo)
 
 		user, exist := userService.FindByUser(userLogin.Username)
 		if !exist {
@@ -53,8 +55,8 @@ func Authentication() gin.HandlerFunc {
 
 		// RefreshToken
 		tokenRefresh := utils.GenUUID()
-		refreshRepo := repositories.NewRefreshTokenRepository(driver.ClientMongo)
-		refreshService := services.NewRefreshTokenService(refreshRepo)
+		refreshRepo := refreshRepo.NewRefreshTokenRepository(driver.ClientMongo)
+		refreshService := refreshUsecase.NewRefreshTokenService(refreshRepo)
 		if err := refreshService.CreateRefreshToken(tokenRefresh, 15); err != nil {
 			httpError.NewInternalServerError(c, err.Error())
 			return

@@ -2,8 +2,8 @@ package middlewares
 
 import (
 	"lottery-web-scrapping/driver"
-	"lottery-web-scrapping/internal/repositories"
-	"lottery-web-scrapping/internal/services"
+	oauthRepo "lottery-web-scrapping/internal/oauth/repository"
+	oauthUsecase "lottery-web-scrapping/internal/oauth/usecase"
 	httpError "lottery-web-scrapping/pkg/http-error"
 	"lottery-web-scrapping/pkg/utils"
 
@@ -61,8 +61,8 @@ func AuthorizationAPIKey() gin.HandlerFunc {
 			return
 		}
 
-		oauthRepo := repositories.NewOAuthClientRepository(driver.ClientMongo)
-		oauthService := services.NewOAuthClientService(oauthRepo)
+		oauthRepo := oauthRepo.NewOAuthClientRepository(driver.ClientMongo)
+		oauthService := oauthUsecase.NewOAuthClientService(oauthRepo)
 
 		result, err := oauthService.FindOAuthClient(apiModel.ApiKey)
 		if err != nil {

@@ -1,4 +1,4 @@
-package repositories
+package repository
 
 import (
 	"context"
@@ -18,16 +18,16 @@ type IOAuthClientRepository interface {
 }
 
 type OAuthClientRepository struct {
-	BaseRepository
+	*mongo.Client
 }
 
 func NewOAuthClientRepository(c *mongo.Client) IOAuthClientRepository {
 	return &OAuthClientRepository{
-		BaseRepository{c},
+		c,
 	}
 }
 
-func (r *BaseRepository) CreateOneOAuthClient(oauth *models.OauthClient) error {
+func (r *OAuthClientRepository) CreateOneOAuthClient(oauth *models.OauthClient) error {
 	oauthClientCollection := r.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("oauth_clients")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -39,7 +39,7 @@ func (r *BaseRepository) CreateOneOAuthClient(oauth *models.OauthClient) error {
 	return nil
 }
 
-func (r *BaseRepository) FindOneOAuthClient(filter bson.M) (*models.OauthClient, error) {
+func (r *OAuthClientRepository) FindOneOAuthClient(filter bson.M) (*models.OauthClient, error) {
 	oauthClientCollection := r.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("oauth_clients")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -53,7 +53,7 @@ func (r *BaseRepository) FindOneOAuthClient(filter bson.M) (*models.OauthClient,
 	return &oauthClient, nil
 }
 
-func (r *BaseRepository) UpdateOne(filter bson.M, update interface{}, opt *options.FindOneAndUpdateOptions) error {
+func (r *OAuthClientRepository) UpdateOne(filter bson.M, update interface{}, opt *options.FindOneAndUpdateOptions) error {
 	oauthClientCollection := r.Client.Database(configs.LoadEnv("MONGO_DB_NAME")).Collection("oauth_clients")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

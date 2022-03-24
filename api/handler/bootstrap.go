@@ -1,39 +1,49 @@
 package handler
 
 import (
-	"lottery-web-scrapping/internal/repositories"
-	"lottery-web-scrapping/internal/services"
+	drawingDateRepo "lottery-web-scrapping/internal/drawing-date/repository"
+	drawingDateUsecase "lottery-web-scrapping/internal/drawing-date/usecase"
+	drawingLotteryRepo "lottery-web-scrapping/internal/drawing-lottery/repository"
+	drawingLotteryUsecase "lottery-web-scrapping/internal/drawing-lottery/usecase"
+	oauthRepo "lottery-web-scrapping/internal/oauth/repository"
+	oauthUsecase "lottery-web-scrapping/internal/oauth/usecase"
+	refreshRepo "lottery-web-scrapping/internal/refresh-token/repository"
+	refreshUsecase "lottery-web-scrapping/internal/refresh-token/usecase"
+	roleRepo "lottery-web-scrapping/internal/role/repository"
+	roleUsecase "lottery-web-scrapping/internal/role/usecase"
+	userRepo "lottery-web-scrapping/internal/user/repository"
+	userUsecase "lottery-web-scrapping/internal/user/usecase"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Handler struct {
-	lotteryService      services.IDrawingLotteryService
-	drawingDateService  services.IDrawingDateService
-	userService         services.IUserService
-	oauthService        services.IOAuthClientService
-	refreshTokenService services.IRefreshTokenService
-	roleService         services.IRoleService
+	lotteryService      drawingLotteryUsecase.IDrawingLotteryService
+	drawingDateService  drawingDateUsecase.IDrawingDateService
+	userService         userUsecase.IUserService
+	oauthService        oauthUsecase.IOAuthClientService
+	refreshTokenService refreshUsecase.IRefreshTokenService
+	roleService         roleUsecase.IRoleService
 }
 
 func NewHanlder(c *mongo.Client) *Handler {
-	lotteryRepo := repositories.NewDrawingLotteryRepository(c)
-	lotteryService := services.NewDrawingLotteryService(lotteryRepo)
+	lotteryRepo := drawingLotteryRepo.NewDrawingLotteryRepository(c)
+	lotteryService := drawingLotteryUsecase.NewDrawingLotteryService(lotteryRepo)
 
-	drawingDateRepo := repositories.NewDrawingDateRepository(c)
-	drawingDateService := services.NewDrawingDateService(drawingDateRepo)
+	drawingDateRepo := drawingDateRepo.NewDrawingDateRepository(c)
+	drawingDateService := drawingDateUsecase.NewDrawingDateService(drawingDateRepo)
 
-	userRepo := repositories.NewUserRepository(c)
-	userService := services.NewUserService(userRepo)
+	userRepo := userRepo.NewUserRepository(c)
+	userService := userUsecase.NewUserService(userRepo)
 
-	oauthRepo := repositories.NewOAuthClientRepository(c)
-	oathService := services.NewOAuthClientService(oauthRepo)
+	oauthRepo := oauthRepo.NewOAuthClientRepository(c)
+	oathService := oauthUsecase.NewOAuthClientService(oauthRepo)
 
-	refreshTokenRepo := repositories.NewRefreshTokenRepository(c)
-	refreshTokenService := services.NewRefreshTokenService(refreshTokenRepo)
+	refreshTokenRepo := refreshRepo.NewRefreshTokenRepository(c)
+	refreshTokenService := refreshUsecase.NewRefreshTokenService(refreshTokenRepo)
 
-	roleRepo := repositories.NewRoleRepository(c)
-	roleService := services.NewRoleService(roleRepo)
+	roleRepo := roleRepo.NewRoleRepository(c)
+	roleService := roleUsecase.NewRoleService(roleRepo)
 
 	return &Handler{lotteryService: lotteryService, drawingDateService: drawingDateService, userService: userService, roleService: roleService, oauthService: oathService, refreshTokenService: refreshTokenService}
 }

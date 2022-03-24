@@ -1,4 +1,4 @@
-package repositories
+package repository
 
 import (
 	"context"
@@ -18,12 +18,12 @@ type IDrawingDateRepository interface {
 }
 
 type DrawingDateRepository struct {
-	BaseRepository
+	*mongo.Client
 }
 
 func NewDrawingDateRepository(c *mongo.Client) IDrawingDateRepository {
 	return &DrawingDateRepository{
-		BaseRepository{c},
+		c,
 	}
 }
 

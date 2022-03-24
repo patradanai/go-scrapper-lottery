@@ -1,4 +1,4 @@
-package repositories
+package repository
 
 import (
 	"context"
@@ -16,12 +16,12 @@ type IDrawingLotteryRepository interface {
 }
 
 type DrawingLotteryRepository struct {
-	BaseRepository
+	*mongo.Client
 }
 
 func NewDrawingLotteryRepository(c *mongo.Client) IDrawingLotteryRepository {
 	return &DrawingLotteryRepository{
-		BaseRepository{c},
+		c,
 	}
 }
 

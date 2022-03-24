@@ -1,8 +1,8 @@
-package services
+package usecase
 
 import (
 	"lottery-web-scrapping/internal/models"
-	"lottery-web-scrapping/internal/repositories"
+	"lottery-web-scrapping/internal/oauth/repository"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,10 +18,10 @@ type IOAuthClientService interface {
 }
 
 type OAuthClientService struct {
-	repository repositories.IOAuthClientRepository
+	repository repository.IOAuthClientRepository
 }
 
-func NewOAuthClientService(r repositories.IOAuthClientRepository) IOAuthClientService {
+func NewOAuthClientService(r repository.IOAuthClientRepository) IOAuthClientService {
 	return &OAuthClientService{r}
 }
 

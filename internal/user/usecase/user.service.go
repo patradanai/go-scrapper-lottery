@@ -1,9 +1,9 @@
-package services
+package usecase
 
 import (
 	"log"
 	"lottery-web-scrapping/internal/models"
-	"lottery-web-scrapping/internal/repositories"
+	"lottery-web-scrapping/internal/user/repository"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -15,10 +15,10 @@ type IUserService interface {
 }
 
 type UserService struct {
-	repository repositories.IUserRepository
+	repository repository.IUserRepository
 }
 
-func NewUserService(r repositories.IUserRepository) IUserService {
+func NewUserService(r repository.IUserRepository) IUserService {
 	return &UserService{r}
 }
 
