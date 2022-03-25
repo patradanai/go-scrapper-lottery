@@ -1,16 +1,13 @@
 package usecase
 
 import (
-	"log"
 	"lottery-web-scrapping/internal/models"
 	"lottery-web-scrapping/internal/user/repository"
-
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type IUserService interface {
 	CreateUser(user *models.User) error
-	FindByUser(username string) (*models.User, bool)
+	FindByUser(username string) (*models.User, error)
 	FindById(id string) (*models.User, error)
 }
 
@@ -26,16 +23,14 @@ func (s *UserService) CreateUser(user *models.User) error {
 	return s.repository.CreateOne(user)
 }
 
-func (s *UserService) FindByUser(username string) (*models.User, bool) {
+func (s *UserService) FindByUser(username string) (*models.User, error) {
 	result, err := s.repository.FindUser(username)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return nil, false
-		}
-		return nil, false
+		return nil, err
 	}
-	log.Println(result)
-	return result, true
+
+	return result, nil
+
 }
 
 func (s *UserService) FindById(id string) (*models.User, error) {
